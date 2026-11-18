@@ -1,0 +1,1642 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Erde – Passate und Jetstreams</title>
+<style>
+
+
+
+  :root {
+    --ui-font: arial, sans-serif;
+  }
+
+
+
+
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #0xffa500;
+    color: white;
+    font-family: var(--ui-font);
+  }
+
+  canvas { display: block; }
+
+  #passatButton {
+ 	
+    width: 6cm;
+    height: 2.5cm;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #525052;
+    color: white;
+    border: 3.5px solid #2B2A2B;
+    border-radius: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    z-index: 10;
+
+  position: fixed !important;
+  bottom: 30px !important;
+Left: var(--passatButton-left, 13%);!important;
+  font-family: "Futura", serif !important;
+  font-size: 22px !important;
+  font-weight: bold !important;
+  font-style: italic !important;
+
+  z-index: 1000;
+
+ 
+    transition: background 0.2s, border-color 0.2s, filter 0.2s;
+  }
+
+
+
+
+  #passatButton.active {
+    background: #2B2A2B;
+    border-color: #C27708;
+  }
+
+#passatButton:hover {
+  filter: brightness(1.5);
+  transform: scale(1.04);
+}
+
+
+
+
+
+  :root {
+    --ui-font: arial, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #020611;
+    color: white;
+    font-family: var(--ui-font);
+  }
+
+  canvas { display: block; }
+
+  #SubJetButton {
+ 	
+    width: 6cm;
+    height: 2.5cm;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #525052;
+    color: white;
+    border: 3.5px solid #2B2A2B;
+    border-radius: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    z-index: 10;
+
+  position: fixed !important;
+  bottom: 30px !important;
+Left: var(--SubJetButton-left, 43%);!important;
+  font-family: "Futura", serif !important;
+  font-size: 22px !important;
+  font-weight: bold !important;
+  font-style: italic !important;
+
+  z-index: 1000;
+
+ 
+    transition: background 0.2s, border-color 0.2s, filter 0.2s;
+  }
+
+  #SubJetButton.active {
+    background: #2B2A2B;
+    border-color: #BD5CA5;
+  }
+
+ #SubJetButton:hover {
+  filter: brightness(1.5);
+  transform: scale(1.04);
+}
+
+
+
+
+  :root {
+    --ui-font: arial, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #020611;
+    color: white;
+    font-family: var(--ui-font);
+  }
+
+  canvas { display: block; }
+
+  #PolarJetButton {
+ 	
+    width: 6cm;
+    height: 2.5cm;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #525052;
+    color: white;
+    border: 3.5px solid #2B2A2B;
+    border-radius: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    z-index: 10;
+
+  position: fixed !important;
+  bottom: 30px !important;
+ Left: var(--PolarJetButton-left, 73%);!important;
+
+
+  font-family: "Futura", serif !important;
+  font-size: 22px !important;
+  font-weight: bold !important;
+  font-style: italic !important;
+
+  z-index: 1000;
+
+ 
+    transition: background 0.2s, border-color 0.2s, filter 0.2s;
+  }
+
+  #PolarJetButton.active {
+    background: #2B2A2B;
+    border-color: #68AABA;
+  }
+
+#PolarJetButton:hover {
+  filter: brightness(1.5);
+  transform: scale(1.04);
+}
+
+
+
+
+
+
+
+
+
+  /* Vertikaler Meander-Regler am rechten Bildschirmrand */
+  #meanderControl {
+    position: fixed;
+    top: var(--meander-top, 50%);
+    right: var(--meander-right, 18px);
+    left: var(--meander-left, auto);
+    transform: translateY(-50%);
+    width: 115px;
+    height: 460px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 8px;
+    background: #2B2A2B;
+    color: white;
+    border: 4px solid #525052;
+    border-radius: 13px;
+ font-family: "Futura", serif !important;
+    font-size: 13px;
+    z-index: 1100;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.35);
+  }
+
+  #meanderControl label {
+    text-align: center;
+    line-height: 1.2;
+    font-weight: bold;
+  }
+
+ /* Hintergrundbahn des Reglers */
+#meanderSlider {
+  -webkit-appearance: none;
+  appearance: none;
+  writing-mode: vertical-lr;
+  direction: rtl;
+
+  width: 12px;
+  height: 320px;
+
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+/* Hover auf der Reglerbahn */
+#meanderSlider:hover {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+/* Balken statt runder Kugel – Chrome, Edge, Safari */
+#meanderSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+
+  width: 24px;
+  height: 10px;
+  border-radius: 999px;
+
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+
+  transition:
+    width 0.2s ease,
+    height 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Hover: Balken wird breiter und heller */
+#meanderSlider:hover::-webkit-slider-thumb {
+  width: 32px;
+  height: 12px;
+  background: #8ed8ff;
+  box-shadow: 0 0 10px rgba(80, 190, 255, 0.75);
+}
+
+/* Firefox */
+#meanderSlider::-moz-range-thumb {
+  width: 24px;
+  height: 10px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+  cursor: grab;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+#meanderSlider:hover::-moz-range-thumb {
+  background: #8ed8ff;
+  box-shadow: 0 0 10px rgba(80, 190, 255, 0.75);
+}
+
+/* =====================================================
+   TEMPERATUR-PANEL
+   Position, Größe und Farben über SETTINGS.ui.thermometerControl
+   ===================================================== */
+#thermometerControl {
+  position: fixed;
+  top: var(--thermo-top, 120px);
+  right: var(--thermo-right, 24px);
+  left: var(--thermo-left, auto);
+  width: var(--thermo-width, 260px);
+  height: var(--thermo-height, auto);
+  box-sizing: border-box;
+  z-index: 1050;
+  padding: 18px;
+  border: 1px solid rgba(150, 200, 255, 0.28);
+  border-radius: 20px;
+  background: var(--thermo-bg, rgba(10, 22, 45, 0.82));
+  color: var(--thermo-text, #ffffff);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25),
+              inset 0 1px 0 rgba(255,255,255,0.08);
+  font-family: var(--ui-font, Arial, sans-serif);
+}
+#thermometerControl .thermo-title {
+  margin-bottom: 5px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .4px;
+}
+#thermometerControl .thermo-subtitle {
+  margin-bottom: 16px;
+  font-size: 11px;
+  opacity: .68;
+}
+#thermometerControl .thermo-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+#thermometerControl .thermo-icon {
+  position: relative;
+  width: 30px;
+  height: 92px;
+  flex: 0 0 30px;
+}
+#thermometerControl .thermo-tube {
+  position: absolute;
+  top: 0;
+  left: 7px;
+  width: 15px;
+  height: 76px;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 2px solid rgba(255,255,255,.8);
+  border-radius: 12px;
+  background: rgba(255,255,255,.09);
+}
+#thermometerControl .thermo-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  border-radius: 8px;
+  background: linear-gradient(to top, var(--thermo-cold, #42a5f5),
+    #a9d9ff 45%, var(--thermo-warm, #ff7043));
+  transition: height .5s ease;
+}
+#thermometerControl .thermo-bulb {
+  position: absolute;
+  left: 2px;
+  bottom: 0;
+  width: 25px;
+  height: 25px;
+  box-sizing: border-box;
+  border: 2px solid rgba(255,255,255,.85);
+  border-radius: 50%;
+  background: var(--thermo-cold, #42a5f5);
+  box-shadow: 0 0 14px rgba(66,165,245,.3);
+}
+#thermometerControl .thermo-data { flex: 1; min-width: 0; }
+#thermometerControl .thermo-temp-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin: 9px 0;
+  font-size: 12px;
+}
+#thermometerControl .thermo-temp {
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+#thermometerControl .thermo-equator { color: var(--thermo-warm, #ff7043); }
+#thermometerControl .thermo-pole { color: var(--thermo-cold, #42a5f5); }
+#thermometerControl .thermo-divider {
+  height: 1px;
+  margin: 14px 0;
+  background: rgba(255,255,255,.16);
+}
+#thermometerControl .thermo-delta-label {
+  font-size: 11px;
+  opacity: .7;
+}
+#thermometerControl .thermo-delta {
+  margin-top: 4px;
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -.5px;
+}
+#thermometerControl .thermo-note {
+  margin-top: 10px;
+  font-size: 10px;
+  line-height: 1.5;
+  opacity: .65;
+}
+@media (max-width: 600px) {
+  #thermometerControl { padding: 12px; border-radius: 15px; }
+  #thermometerControl .thermo-title { font-size: 14px; }
+  #thermometerControl .thermo-subtitle { margin-bottom: 10px; }
+  #thermometerControl .thermo-temp { font-size: 15px; }
+  #thermometerControl .thermo-delta { font-size: 22px; }
+}
+
+
+  .pressure-toggle {
+    position: fixed; bottom: calc(30px + 2.5cm + 8px); width: 5cm; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    background: #4A5463; color: white; border: 2px solid #73829E;
+    border-radius: 13px; font: bold 13px futura, sans-serif;
+    cursor: pointer;
+    /* Im Ruhezustand hinter dem großen Jetstream-Button versteckt */
+    z-index: 9; opacity: 0; visibility: hidden; pointer-events: none;
+    transform: translateY(42px) scale(.12); transform-origin: center bottom;
+    /* Gleiche Dauer und Kurve in beide Richtungen: Ausblenden ist exakt der Rückwärtsweg. */
+    transition: opacity .42s ease,
+                transform .42s cubic-bezier(.2,1.65,.45,1),
+                visibility 0s linear .42s;
+  }
+  .pressure-toggle.show {
+    opacity: 1; visibility: visible; pointer-events: auto;
+    transform: translateY(0) scale(1); z-index: 1100;
+    transition: opacity .42s ease,
+                transform .42s cubic-bezier(.2,1.65,.45,1),
+                visibility 0s;
+  }
+  .pressure-toggle.active { background: #34465b; border-color: #80BD93; }
+  #subPressureButton { left: 44.3%; }
+  #polarPressureButton { left: 74.4%; }
+
+.pressure-toggle:hover {
+  filter: brightness(1.2);
+  transform: scale(1.04);
+}
+
+
+</style>
+</head>
+
+<body>
+
+
+
+
+
+
+
+
+
+<div  id="passatButton" class="inactive" role="button" tabindex="0" aria-pressed="false">
+  Passate
+</div>
+
+
+
+<div id="SubJetButton" class="inactive" role="button" tabindex="0" aria-pressed="false">
+  <center>Subpolare Jetstreams</center>
+</div>
+
+
+<div id="PolarJetButton" class="inactive" role="button" tabindex="0" aria-pressed="false">
+  Polare Jetstreams
+</div>
+
+<button id="subPressureButton" class="pressure-toggle" type="button" aria-pressed="false">Hoch-/Tiefdruck</button>
+<button id="polarPressureButton" class="pressure-toggle" type="button" aria-pressed="false">Hoch-/Tiefdruck</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Vertikaler Regler für den Meander der Jetstreams -->
+<div id="meanderControl">
+  <label for="meanderSlider">Jetstream-Meander</label>
+  <input id="meanderSlider" type="range" min="0" max="100" value="0" step="1" aria-label="Jetstream-Meander">
+  <output id="meanderValue" for="meanderSlider"> 40 °C</output>
+</div>
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<script>
+// ============================================================
+// EINSTELLUNGEN – NUR HIER IM HTML-CODE ÄNDERN
+// ============================================================
+
+const SETTINGS = {
+  ui: {
+    // SCHRIFTART HIER ÄNDERN:
+    // Beispiele: "Arial, sans-serif", "Verdana, sans-serif",
+    // "Georgia, serif", "Trebuchet MS, sans-serif"
+    fontFamily: "Arial, sans-serif",
+    buttonFontSize: 14,
+    buttonFontWeight: "bold",
+
+    // MEANDER-REGLER: Position und Größe später hier anpassen.
+    // top = vertikale Mitte des Reglers; right = Abstand vom rechten Rand.
+    meanderControl: {
+      top: "50%",
+      right: "18px",
+      left: "auto",
+      width: "84px",
+      height: "280px",
+      label: "Temperaturdifferenz"
+    }
+  },
+
+     
+  passates: {
+    lineWidth: 0.012,
+    lineOpacity: 0.85,
+    lineColor: 0xffa500,
+    pointSize: 0.028,
+    pointColor: 0xffd166,
+    pointCount: 100,
+    pointSpeed: 0.8
+  },
+
+  subtropicalJet: {
+    lineWidth: 0.035,
+    lineOpacity: 1.0,
+    lineColor: 0xff55cc,
+    pointSize: 0.045,
+    pointColor: 0xffb0e8,
+    pointCount: 120,
+    pointSpeed: -0.55
+  },
+
+  polarJet: {
+    lineWidth: 0.035,
+    lineOpacity: 1.0,
+    lineColor: 0x00ffff,
+    pointSize: 0.045,
+    pointColor: 0xa5ffff,
+    pointCount: 120,
+    pointSpeed: -0.95
+  },
+
+  earth: {
+    radius: 2,
+    rotationSpeed: 0.025,
+    cloudRotationSpeed: 0.032
+  },
+
+  jetstreams: {
+    subtropicalLatitude: 28,
+    subtropicalWaveAmplitude: 16,
+    polarLatitude: 52,
+    polarWaveAmplitude: 19,
+
+    // Bei 0 %: sanfte, natürliche Grundwellen wie in Abbildung 2.
+    // Mit dem Meander-Regler werden die Wellen zusätzlich verstärkt.
+    baselineMeander: 0.3296,
+    meanderMultiplier: 1.90,
+
+    // Zusätzliche Mäanderstärke. 0 = nur Grundwelle, 1 = maximal.
+    defaultMeander: 0,
+
+    slowAtMaximumMeander: 0.09
+  },
+
+  passate: {
+    sourceLatitude: 30,
+    targetLatitude: 5,
+    tracksPerHemisphere: 8,
+    westwardDegrees: 65,
+    waveAmplitude: 1.2
+  }
+
+
+
+
+
+
+};
+
+// ============================================================
+// GRUNDAUFBAU
+// ============================================================
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x020611);
+
+const camera = new THREE.PerspectiveCamera(
+  45,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+camera.position.set(0, 0, 8);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 3.2;
+controls.maxDistance = 15;
+
+scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+
+const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+sun.position.set(5, 3, 5);
+scene.add(sun);
+
+const earthGroup = new THREE.Group();
+scene.add(earthGroup);
+
+const R = SETTINGS.earth.radius;
+const loader = new THREE.TextureLoader();
+
+// Erde
+const earthMaterial = new THREE.MeshPhongMaterial({
+  map: loader.load(
+    "https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg",
+    undefined,
+    undefined,
+    () => console.warn("Erdtextur konnte nicht geladen werden. Internet prüfen.")
+  ),
+  specular: new THREE.Color(0x223344),
+  shininess: 8
+});
+
+const earth = new THREE.Mesh(
+  new THREE.SphereGeometry(R, 96, 64),
+  earthMaterial
+);
+earthGroup.add(earth);
+
+// Wolkenschicht
+const cloudMaterial = new THREE.MeshPhongMaterial({
+  map: loader.load(
+    "https://threejs.org/examples/textures/planets/earth_clouds_1024.png"
+  ),
+  transparent: true,
+  opacity: 0.34,
+  depthWrite: false
+});
+
+const clouds = new THREE.Mesh(
+  new THREE.SphereGeometry(R * 1.008, 96, 64),
+  cloudMaterial
+);
+earthGroup.add(clouds);
+
+// Atmosphäre
+const atmosphere = new THREE.Mesh(
+  new THREE.SphereGeometry(R * 1.035, 64, 48),
+  new THREE.MeshBasicMaterial({
+    color: 0x3388ff,
+    transparent: true,
+    opacity: 0.07,
+    side: THREE.BackSide,
+    blending: THREE.AdditiveBlending
+  })
+);
+earthGroup.add(atmosphere);
+
+// Sternenhimmel
+const starPositions = [];
+
+for (let i = 0; i < 3000; i++) {
+  const radius = 35 + Math.random() * 65;
+  const theta = Math.random() * Math.PI * 2;
+  const u = Math.random() * 2 - 1;
+  const s = Math.sqrt(1 - u * u);
+
+  starPositions.push(
+    radius * s * Math.cos(theta),
+    radius * u,
+    radius * s * Math.sin(theta)
+  );
+}
+
+const starGeometry = new THREE.BufferGeometry();
+starGeometry.setAttribute(
+  "position",
+  new THREE.Float32BufferAttribute(starPositions, 3)
+);
+
+const stars = new THREE.Points(
+  starGeometry,
+  new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 0.12,
+    sizeAttenuation: true
+  })
+);
+scene.add(stars);
+
+// ============================================================
+// GEOGRAFISCHE KOORDINATEN
+// ============================================================
+
+function spherePoint(latDeg, lonDeg, radius = R * 1.014) {
+  const lat = THREE.MathUtils.degToRad(latDeg);
+  const lon = THREE.MathUtils.degToRad(lonDeg);
+
+  return new THREE.Vector3(
+    radius * Math.cos(lat) * Math.sin(lon),
+    radius * Math.sin(lat),
+    radius * Math.cos(lat) * Math.cos(lon)
+  );
+}
+
+// ============================================================
+// BREITEN- UND LÄNGENGRADE
+// ============================================================
+
+const gridGroup = new THREE.Group();
+earthGroup.add(gridGroup);
+
+function addGridLine(points) {
+  const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+  const material = new THREE.LineBasicMaterial({
+    color: 0x77aacc,
+    transparent: true,
+    opacity: 0.18,
+    depthWrite: false
+  });
+
+  gridGroup.add(new THREE.Line(geometry, material));
+}
+
+for (let lat = -75; lat <= 75; lat += 15) {
+  const points = [];
+
+  for (let lon = -180; lon <= 180; lon += 3) {
+    points.push(spherePoint(lat, lon, R * 1.003));
+  }
+
+  addGridLine(points);
+}
+
+for (let lon = -180; lon < 180; lon += 15) {
+  const points = [];
+
+  for (let lat = -90; lat <= 90; lat += 3) {
+    points.push(spherePoint(lat, lon, R * 1.003));
+  }
+
+  addGridLine(points);
+}
+
+// ============================================================
+// WINDKURVEN
+// ============================================================
+
+const windGroup = new THREE.Group();
+earthGroup.add(windGroup);
+
+let currentMeander = Number(SETTINGS.jetstreams.defaultMeander);
+
+function getMeander() {
+  return currentMeander;
+}
+
+let jetWaveTime = 0;
+let jetShapeUpdateAccumulator = 0;
+
+function getJetSpeedFactor() {
+  // Die Verlangsamung setzt früh ein: bei 25 °C (Regler-Mitte)
+  // bewegen sich Jetstreams und Partikel bereits nur noch mit ca. 17 %.
+  // Bei 10 °C bleibt eine minimale Bewegung von 5 % erhalten.
+  const m = Math.max(0, Math.min(1, getMeander()));
+  return Math.max(0.05, 1 - Math.pow(m, 0.18) * 0.95);
+}
+
+function getJetLatitude(lonDeg, signedBase, phase, amplitude) {
+  const lon = THREE.MathUtils.degToRad(lonDeg);
+  const m = getMeander();
+
+  // Mit sinkender Temperaturdifferenz (40 -> 10 °C) werden die
+  // Berge und Täler immer stärker.
+  const strength = amplitude * (
+    SETTINGS.jetstreams.baselineMeander +
+    m * SETTINGS.jetstreams.meanderMultiplier
+  );
+
+  // Die Wellen wandern; ihre Bewegung wird mit dem Regler langsamer.
+  const movingPhase = jetWaveTime;
+
+  // Fünf vollständige Wellenzyklen rund um den Globus: fünf Berge
+  // und fünf Täler – auch bei maximaler Mäanderstärke (10 °C).
+  return signedBase
+    + Math.sin(5 * lon + phase + movingPhase) * strength
+    + Math.sin(9 * lon - phase * 0.7 + movingPhase * 1.35) * strength * 0.14
+    + Math.sin(13 * lon + phase * 1.3 - movingPhase * 1.8) * strength * 0.025;
+}
+
+// Passatbahn: offene Kurve vom subtropischen Bereich zum Äquator.
+function getPassatePosition(t, hemi, trackIndex) {
+  const cfg = SETTINGS.passate;
+  const startLat = cfg.sourceLatitude;
+  const endLat = cfg.targetLatitude;
+
+  const lat = hemi === "N"
+    ? startLat + (endLat - startLat) * t
+    : -startLat + (startLat - endLat) * t;
+
+  const startLon = -180 +
+    (trackIndex + 0.5) * (360 / cfg.tracksPerHemisphere);
+
+  const lon = startLon - cfg.westwardDegrees * t;
+
+  const wave = Math.sin(t * Math.PI) *
+    Math.sin(THREE.MathUtils.degToRad(startLon * 2)) *
+    cfg.waveAmplitude;
+
+  return spherePoint(lat + wave, lon, R * 1.018);
+}
+
+// Geschlossene Jetstreamkurve rund um den Globus.
+function buildJetCurve(flow, hemi) {
+  const cfg = flow.config;
+
+  const base = cfg.type === "sub"
+    ? SETTINGS.jetstreams.subtropicalLatitude
+    : SETTINGS.jetstreams.polarLatitude;
+
+  const amplitude = cfg.type === "sub"
+    ? SETTINGS.jetstreams.subtropicalWaveAmplitude
+    : SETTINGS.jetstreams.polarWaveAmplitude;
+
+  const signedBase = hemi === "N" ? base : -base;
+  const phase = hemi === "N" ? cfg.phase : cfg.phase + 1.7;
+  const points = [];
+
+  for (let lon = -180; lon < 180; lon += 2) {
+    const lat = getJetLatitude(lon, signedBase, phase, amplitude);
+    points.push(spherePoint(lat, lon, R * 1.018));
+  }
+
+  return new THREE.CatmullRomCurve3(points, true, "catmullrom", 0.5);
+}
+
+// ============================================================
+// LINIEN UND PARTIKEL
+// ============================================================
+
+function createTube(curve, color, radius, opacity, tubularSegments = 300, closed = false) {
+  const geometry = new THREE.TubeGeometry(
+    curve, tubularSegments, radius, 8, closed
+  );
+
+  const material = new THREE.MeshBasicMaterial({
+    color,
+    transparent: opacity < 1,
+    opacity,
+    depthWrite: false
+  });
+
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.renderOrder = 3;
+  windGroup.add(mesh);
+  return mesh;
+}
+
+function createFlow(config) {
+  return {
+    config,
+    tracks: [],
+    lines: [],
+    particles: [],
+    particleData: []
+  };
+}
+
+function createParticles(flow) {
+  // Vorherige Partikel entfernen.
+  for (const particle of flow.particles) {
+    windGroup.remove(particle);
+    particle.material.dispose();
+  }
+
+  flow.particles = [];
+  flow.particleData = [];
+
+  const cfg = flow.config;
+  if (flow.tracks.length === 0) return;
+
+  const geometry = new THREE.SphereGeometry(cfg.pointSize, 8, 6);
+  const trackCount = flow.tracks.length;
+
+  // Anzahl der Punkte je Bahn bestimmen.
+  const countsPerTrack = Array(trackCount).fill(0);
+  for (let i = 0; i < cfg.pointCount; i++) {
+    countsPerTrack[i % trackCount]++;
+  }
+
+  const nextIndexPerTrack = Array(trackCount).fill(0);
+
+  for (let i = 0; i < cfg.pointCount; i++) {
+    const particle = new THREE.Mesh(
+      geometry,
+      new THREE.MeshBasicMaterial({ color: cfg.pointColor })
+    );
+
+    particle.renderOrder = 5;
+    windGroup.add(particle);
+    flow.particles.push(particle);
+
+    const trackIndex = i % trackCount;
+    const indexOnTrack = nextIndexPerTrack[trackIndex]++;
+    const countOnTrack = countsPerTrack[trackIndex];
+
+    // Gleichmäßige Abstände entlang der Kurvenlänge.
+    const t = (indexOnTrack + 0.5) / countOnTrack;
+
+    flow.particleData.push({ trackIndex, t });
+  }
+}
+
+function buildPassate(flow) {
+  for (const line of flow.lines) {
+    windGroup.remove(line);
+    line.geometry.dispose();
+    line.material.dispose();
+  }
+
+  flow.lines = [];
+  flow.tracks = [];
+
+  const numberOfTracks = SETTINGS.passate.tracksPerHemisphere;
+
+  for (const hemi of ["N", "S"]) {
+    for (let trackIndex = 0; trackIndex < numberOfTracks; trackIndex++) {
+      const points = [];
+
+      for (let i = 0; i <= 100; i++) {
+        points.push(getPassatePosition(i / 100, hemi, trackIndex));
+      }
+
+      const curve = new THREE.CatmullRomCurve3(
+        points, false, "catmullrom", 0.5
+      );
+
+      flow.tracks.push({ curve, hemi, trackIndex });
+
+      flow.lines.push(
+        createTube(
+          curve,
+          flow.config.lineColor,
+          flow.config.lineWidth,
+          flow.config.lineOpacity,
+          140,
+          false
+        )
+      );
+    }
+  }
+
+  createParticles(flow);
+}
+
+function rebuildJetstreamShape(flow) {
+  const wasVisible = flow.lines.length ? flow.lines[0].visible : true;
+
+  for (const line of flow.lines) {
+    windGroup.remove(line);
+    line.geometry.dispose();
+    line.material.dispose();
+  }
+
+  flow.lines = [];
+  flow.tracks = [];
+
+  for (const hemi of ["N", "S"]) {
+    const curve = buildJetCurve(flow, hemi);
+    flow.tracks.push({ curve, hemi });
+
+    const line = createTube(
+      curve,
+      flow.config.lineColor,
+      flow.config.lineWidth,
+      flow.config.lineOpacity,
+      420,
+      true
+    );
+    line.visible = wasVisible;
+    flow.lines.push(line);
+  }
+}
+
+function buildJetstream(flow) {
+  rebuildJetstreamShape(flow);
+  createParticles(flow);
+}
+
+// ============================================================
+// STRÖMUNGEN ERSTELLEN
+// ============================================================
+
+const passFlow = createFlow({
+  type: "passates",
+  ...SETTINGS.passates
+});
+
+const subFlow = createFlow({
+  type: "sub",
+  phase: 1.1,
+  ...SETTINGS.subtropicalJet
+});
+
+const polarFlow = createFlow({
+  type: "polar",
+  phase: 2.4,
+  ...SETTINGS.polarJet
+});
+
+buildPassate(passFlow);
+buildJetstream(subFlow);
+buildJetstream(polarFlow);
+
+// ============================================================
+// PASSAT-BOX
+// ============================================================
+
+const passatButton = document.getElementById("passatButton");
+let passatesVisible = false;
+
+function updateVisibility() {
+  passFlow.lines.forEach(line => line.visible = passatesVisible);
+  passFlow.particles.forEach(point => point.visible = passatesVisible);
+
+  clouds.visible = true;
+  stars.visible = true;
+}
+
+function togglePassates() {
+  passatesVisible = !passatesVisible;
+  passatButton.classList.toggle("active", passatesVisible);
+  passatButton.setAttribute("aria-pressed", String(passatesVisible));
+  updateVisibility();
+}
+
+passatButton.addEventListener("click", togglePassates);
+passatButton.addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    togglePassates();
+  }
+});
+
+// Schriftart und Schriftstil aus den Code-Einstellungen übernehmen.
+document.documentElement.style.setProperty(
+  "--ui-font",
+  SETTINGS.ui.fontFamily
+);
+passatButton.style.fontFamily = SETTINGS.ui.fontFamily;
+passatButton.style.fontSize = SETTINGS.ui.buttonFontSize + "px";
+passatButton.style.fontWeight = SETTINGS.ui.buttonFontWeight;
+
+
+
+// ============================================================
+// SUBJET-BOX
+// ============================================================
+
+const subJetButton = document.getElementById("SubJetButton");
+let subJetVisible = false;
+
+function updateSubJetVisibility() {
+  subFlow.lines.forEach(line => line.visible = subJetVisible);
+  subFlow.particles.forEach(point => point.visible = subJetVisible);
+}
+updateSubJetVisibility();
+
+function toggleSubJet() {
+  subJetVisible = !subJetVisible;
+  subJetButton.classList.toggle("active", subJetVisible);
+  subJetButton.setAttribute("aria-pressed", String(subJetVisible));
+  updateSubJetVisibility();
+  syncPressureControls();
+}
+
+subJetButton.addEventListener("click", toggleSubJet);
+
+// Schriftart und Schriftstil aus den Code-Einstellungen übernehmen.
+subJetButton.style.fontFamily = SETTINGS.ui.fontFamily;
+subJetButton.style.fontSize = SETTINGS.ui.buttonFontSize + "px";
+subJetButton.style.fontWeight = SETTINGS.ui.buttonFontWeight;
+
+
+// ============================================================
+// POLJET-BOX
+// ============================================================
+
+const polarJetButton = document.getElementById("PolarJetButton");
+let polarJetVisible = false;
+
+function updatePolarJetVisibility() {
+  polarFlow.lines.forEach(line => line.visible = polarJetVisible);
+  polarFlow.particles.forEach(point => point.visible = polarJetVisible);
+}
+updatePolarJetVisibility();
+
+function togglePolarJet() {
+  polarJetVisible = !polarJetVisible;
+  polarJetButton.classList.toggle("active", polarJetVisible);
+  polarJetButton.setAttribute("aria-pressed", String(polarJetVisible));
+  updatePolarJetVisibility();
+  syncPressureControls();
+}
+
+polarJetButton.addEventListener("click", togglePolarJet);
+
+// Schriftart und Schriftstil aus den Code-Einstellungen übernehmen.
+polarJetButton.style.fontFamily = SETTINGS.ui.fontFamily;
+polarJetButton.style.fontSize = SETTINGS.ui.buttonFontSize + "px";
+polarJetButton.style.fontWeight = SETTINGS.ui.buttonFontWeight;
+
+// ============================================================
+// HOCH- UND TIEFDRUCKGEBIETE (je Jetstream separat schaltbar)
+// ============================================================
+function makePressureTexture(letter, color) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 256; canvas.height = 256;
+  const ctx = canvas.getContext("2d");
+  ctx.beginPath(); ctx.arc(128, 128, 108, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(5, 12, 25, 0.82)"; ctx.fill();
+  ctx.lineWidth = 13; ctx.strokeStyle = color; ctx.stroke();
+  ctx.fillStyle = color; ctx.font = "bold 150px Arial";
+  ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(letter, 128, 135);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+  return texture;
+}
+const pressureTextures = {
+  H: makePressureTexture("H", "#EDD864"),
+  T: makePressureTexture("T", "#A5D952")
+};
+function createPressureSystems(flow, baseLatitude) {
+  const group = new THREE.Group();
+  windGroup.add(group);
+  // Fünf Hochs auf den Wellenrücken und fünf Tiefs in den Wellentälern,
+  // jeweils auf beiden Halbkugeln.
+  for (const hemi of [1, -1]) {
+    for (let i = 0; i < 5; i++) {
+      for (const letter of ["H", "T"]) {
+        const sprite = new THREE.Sprite(new THREE.SpriteMaterial({
+          map: pressureTextures[letter], transparent: true, depthWrite: false
+        }));
+        sprite.scale.set(R * 0.105, R * 0.105, 1);
+        sprite.renderOrder = 2;
+        sprite.userData.pressureHemisphere = hemi;
+        sprite.userData.pressureLetter = letter;
+        sprite.userData.waveIndex = i;
+        group.add(sprite);
+      }
+    }
+  }
+  group.userData.flow = flow;
+  group.userData.baseLatitude = baseLatitude;
+  group.visible = false;
+  return group;
+}
+const subPressureGroup = createPressureSystems(subFlow, SETTINGS.jetstreams.subtropicalLatitude);
+const polarPressureGroup = createPressureSystems(polarFlow, SETTINGS.jetstreams.polarLatitude);
+function updatePressureSystemPositions(group) {
+  const flow = group.userData.flow;
+  const base = group.userData.baseLatitude;
+  const amplitude = flow.config.type === "sub"
+    ? SETTINGS.jetstreams.subtropicalWaveAmplitude
+    : SETTINGS.jetstreams.polarWaveAmplitude;
+  const wavePhase = flow.config.phase + jetWaveTime;
+  group.children.forEach(sprite => {
+    const hemi = sprite.userData.pressureHemisphere;
+    const signedBase = hemi * base;
+    const phase = hemi === 1 ? wavePhase : flow.config.phase + 1.7 + jetWaveTime;
+    const i = sprite.userData.waveIndex;
+    const letter = sprite.userData.pressureLetter;
+    // Startwerte der fünf Rücken bzw. Täler der dominanten Fünferwelle.
+    const target = THREE.MathUtils.radToDeg(((letter === "H" ? Math.PI / 2 : 3 * Math.PI / 2) - phase + i * Math.PI * 2) / 5);
+    // Kontinuierliche analytische Position statt diskreter Suchschritte:
+    // so gleiten H und T ohne sichtbare Sprünge mit der Fünferwelle.
+    const smoothLon = target;
+    const smoothLat = getJetLatitude(smoothLon, signedBase, phase, amplitude);
+    // Die Symbole sitzen direkt am Rücken bzw. Tal; die Jetstream-Linie
+    // wird durch ihren höheren Render-Order sichtbar über den Symbolen gezeichnet.
+    sprite.position.copy(spherePoint(smoothLat, smoothLon, R * 1.047));
+  });
+}
+const subPressureButton = document.getElementById("subPressureButton");
+const polarPressureButton = document.getElementById("polarPressureButton");
+let subPressureVisible = false, polarPressureVisible = false;
+function syncPressureControls() {
+  subPressureButton.classList.toggle("show", subJetVisible);
+  polarPressureButton.classList.toggle("show", polarJetVisible);
+  subPressureGroup.visible = subJetVisible && subPressureVisible;
+  polarPressureGroup.visible = polarJetVisible && polarPressureVisible;
+}
+subPressureButton.addEventListener("click", () => {
+  subPressureVisible = !subPressureVisible;
+  subPressureButton.classList.toggle("active", subPressureVisible);
+  subPressureButton.setAttribute("aria-pressed", String(subPressureVisible));
+  syncPressureControls();
+});
+polarPressureButton.addEventListener("click", () => {
+  polarPressureVisible = !polarPressureVisible;
+  polarPressureButton.classList.toggle("active", polarPressureVisible);
+  polarPressureButton.setAttribute("aria-pressed", String(polarPressureVisible));
+  syncPressureControls();
+});
+syncPressureControls();
+
+// ============================================================
+// MEANDER-SCHIEBEREGLER
+// ============================================================
+
+
+
+const meanderSlider = document.getElementById("meanderSlider");
+const meanderValue = document.getElementById("meanderValue");
+const meanderControl = document.getElementById("meanderControl");
+const meanderUi = SETTINGS.ui.meanderControl;
+
+// Position und Größe direkt aus SETTINGS übernehmen.
+document.documentElement.style.setProperty("--meander-top", meanderUi.top);
+document.documentElement.style.setProperty("--meander-right", meanderUi.right);
+document.documentElement.style.setProperty("--meander-left", meanderUi.left);
+document.documentElement.style.setProperty("--meander-width", meanderUi.width);
+document.documentElement.style.setProperty("--meander-height", meanderUi.height);
+meanderControl.querySelector("label").textContent = "Temperatur-differenz";
+
+// Temperaturbereich: unten = 40 °C, oben = 10 °C.
+// Start ganz unten; die Anzeige folgt der Reglerposition.
+meanderSlider.min = "0";
+meanderSlider.max = "100";
+meanderSlider.step = "1";
+meanderSlider.value = "0";
+currentMeander = 0;
+
+function updateTemperatureLabel() {
+  const sliderValue = Number(meanderSlider.value);
+  const temperature = 40 - (sliderValue / 100) * 30;
+  meanderValue.textContent = `${Math.round(temperature)} °C`;
+}
+
+updateTemperatureLabel();
+
+meanderSlider.addEventListener("input", () => {
+  currentMeander = Number(meanderSlider.value) / 100;
+  updateTemperatureLabel();
+
+  // Nur die Kurvenform aktualisieren. Die Partikel bleiben erhalten
+  // und werden nicht bei jeder Reglerbewegung neu verteilt.
+  rebuildJetstreamShape(subFlow);
+  rebuildJetstreamShape(polarFlow);
+
+  // Bereits gewählte Sichtbarkeit der Jetstreams beibehalten.
+  updateSubJetVisibility();
+  updatePolarJetVisibility();
+});
+
+
+
+// ============================================================
+// PARTIKELBEWEGUNG
+// ============================================================
+const clock = new THREE.Clock();
+
+function updateParticles(flow, delta) {
+  const cfg = flow.config;
+  let slowdown = 1;
+
+  if (cfg.type !== "passates") {
+    const m = getMeander();
+    slowdown = getJetSpeedFactor();
+  }
+
+  flow.particleData.forEach((data, i) => {
+    const speed = cfg.type === "passates"
+      ? cfg.pointSpeed * 0.035
+      : cfg.pointSpeed * 0.055 * slowdown;
+
+    if (cfg.type === "passates") {
+      // Passate: ursprüngliche Richtung beibehalten
+      data.t += delta * speed;
+      data.t = ((data.t % 1) + 1) % 1;
+    } else {
+      // Jetstreams: negative Geschwindigkeit erlaubt Richtungsumkehr
+      data.t = ((data.t - delta * speed) % 1 + 1) % 1;
+    }
+
+    const track = flow.tracks[data.trackIndex];
+    const position = track.curve.getPointAt(data.t);
+    flow.particles[i].position.copy(position);
+  });
+}
+// ============================================================
+// ANIMATION
+// ============================================================
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  const delta = Math.min(clock.getDelta(), 0.05);
+
+  earth.rotation.y += delta * SETTINGS.earth.rotationSpeed;
+  clouds.rotation.y += delta * SETTINGS.earth.cloudRotationSpeed;
+  gridGroup.rotation.y += delta * SETTINGS.earth.rotationSpeed;
+
+  // Wellen und Partikel folgen derselben früh einsetzenden Abbremsung.
+  // Auch bei 10 °C bleibt eine langsame, sichtbare Bewegung von 5 %.
+  const jetSpeedFactor = getJetSpeedFactor();
+  const waveMotionFactor = jetSpeedFactor;
+  jetWaveTime += delta * SETTINGS.earth.rotationSpeed * waveMotionFactor;
+  updatePressureSystemPositions(subPressureGroup);
+  updatePressureSystemPositions(polarPressureGroup);
+
+  // Die Geometrie mit derselben Wellen-Geschwindigkeit aktualisieren,
+  // damit die wandernden Berge und Täler flüssig sichtbar bleiben.
+  jetShapeUpdateAccumulator += delta * waveMotionFactor;
+  if (jetShapeUpdateAccumulator >= 0.016) {
+    jetShapeUpdateAccumulator %= 0.016;
+    rebuildJetstreamShape(subFlow);
+    rebuildJetstreamShape(polarFlow);
+  }
+
+  updateParticles(passFlow, delta);
+  updateParticles(subFlow, delta);
+  updateParticles(polarFlow, delta);
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+updateVisibility();
+animate();
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="infoButton" onclick="toggleInfo()">
+    <span id="buttonText">Mehr Infos</span>
+</div>
+
+<style>
+
+#infoButton {
+  position: fixed;
+  top:30px;
+  left: 30px;
+  z-index: 999999;
+
+text-align: center;
+  width: 180px;
+  height: 52px;
+  padding: 5px 20px;
+  box-sizing: border-box;
+display: flex;
+align-items: center;
+justify-content: center;
+  overflow: hidden;
+
+  border: 3px solid #525052;
+  border-radius: 14px;
+  background: #2B2A2B;
+  color: white;
+  font-size: 17px;
+  font-weight: 200;
+font-family: "Futura", serif !important;
+  font-weight: bold !important;
+  font-style: italic !important;
+      align-items: center;
+    justify-content: center;
+  text-align: center;
+  cursor: pointer;
+    pointer-events: auto;
+
+  transition:
+    width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    background 0.3s ease,
+    border-radius 0.3s ease;
+
+  will-change: width, height;
+
+}
+
+#infoButton:hover {
+  filter: brightness(1.5);
+  transform: scale(1.04);
+}
+
+#infoButton.aktiv:hover {
+  filter: none !important;
+  transform:none !important;
+}
+
+
+
+#infoButton.aktiv {
+  width: 340px;
+  height: 670px;
+  background: #525052;
+  border-color: #2B2A2B;
+  border-radius: 14px;
+}
+
+#buttonText {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  line-height: 1.3;
+}
+
+
+
+.detailButton {
+  display: block;
+  width: 90%;
+  margin: 10px auto;
+  padding: 10px;
+  background: #525052;
+  color: white;
+  border: 3px solid white;
+  border-radius: 14px;
+  cursor: pointer;
+ font-family: "futura", sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+
+    padding: 14px 24px;
+    margin: 12px auto;
+
+}
+
+.detailButton:hover {
+  filter: brightness(1.5);
+  transform: scale(1.04);
+}
+
+
+
+
+#detailInfo {
+    display: none;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background: #525052;
+    color: white;
+    padding: 25px;
+    border-radius: inherit;
+    overflow-y: auto;
+    z-index: 10;
+    text-align: justify;
+    font-size: 19px;
+}
+
+#detailInfo.anzeigen {
+    display: block;
+}
+
+
+
+
+.infoText {
+    position: relative;
+    margin-top: -25px;
+    padding-top: 0;
+}
+
+
+.infoText h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+
+
+.infoText p {
+    display: block;
+    color: white;
+    font-size: 22px;
+    text-align: justify;
+    line-height: 1.5;
+}
+
+
+</style>
+
+
+<script>
+function toggleInfo() {
+    const text = document.getElementById("buttonText");
+    const button = document.getElementById("infoButton");
+
+    // Prüfen, ob das Detailfenster bereits geöffnet ist
+    const detail = document.getElementById("detailInfo");
+
+    if (detail && detail.classList.contains("anzeigen")) {
+        detail.classList.remove("anzeigen");
+        return;
+    }
+
+    if (button.classList.contains("aktiv")) {
+        button.classList.remove("aktiv");
+        text.innerHTML = "Mehr Infos";
+    } else {
+        button.classList.add("aktiv");
+
+        text.innerHTML = `
+            <div class="infoText">
+                <h2>Jetstreams</h2>
+            </div>
+
+            <div class="infoButtons">
+                <button class="detailButton"
+                    onclick="event.stopPropagation(); zeigeInfo('passat')">
+                    Mehr über Jetstreams
+                </button>
+
+                <button class="detailButton"
+                    onclick="event.stopPropagation(); zeigeInfo('erdrotation')">
+                    Auswirkungen des Klimawandels
+                </button>
+            </div>
+
+            <div id="detailInfo"></div>
+        `;
+    }
+}
+
+function zeigeInfo(thema) {
+    const detail = document.getElementById("detailInfo");
+
+    let inhalt = "";
+
+    if (thema === "passat") {
+        inhalt = `
+            <h2>Details zu Jetstreams</h2>
+            <p>Jetstreams entstehen durch <span style="color: #82D7ED;"> Luftdruckunterschiede</span> zwischen dem Äquator und den Polen. Je höher dabei die Differenz der Temperatur ist, desto schneller fließen die Strömungen in der Flut. Durch die Erdrotation werden diese Winde abgelenkt wodurch sich die Jetstreams  wie ein Band um die Erde legen und verlaufen aufgrund von hohen Gebirgen oder anderen Hindernissen Wellenförmig. Die Jetstreams werden sich häufig im Flugverkehr zu nutzen gemacht, da diese die Flugdauer von Ost nach West oder von West nach Ost stark beeinflussen.</p>
+        `;
+    }
+
+    if (thema === "erdrotation") {
+        inhalt = `
+            <h2>Auswirkungen des Klimawandels</h2>
+            <p>Aufgrund des Menschen gemachten Klimawandels, wird der Temperaturunterschied zwischen den Polen immer niedriger. Dadurch verlieren die Jetstreams an Geschwindigkeit und Mäandrieren stärker. Dadurch bleiben Hoch- und Tiefdruckgebiete länger an einer Stelle und verursachen somit langanhaltende Extremwetter in den Regionen.</p>
+        `;
+    }
+
+    detail.innerHTML = inhalt;
+    detail.classList.add("anzeigen");
+}
+
+
+</script>
+
+// Diese Funktion steht außerhalb von toggleInfo()!
+function zeigeInfo(thema) {
+
+  const detail = document.getElementById("detailInfo");
+
+  const infos = {
+    passat: `
+      <strong>Passatwinde im Detail</strong>
+      <p>Hier steht dein ausführlicher Informationstext über die Passatwinde.</p>
+    `,
+
+    erdrotation: `
+      <strong>Erdrotation im Detail</strong>
+      <p>Hier steht dein ausführlicher Informationstext über die Erdrotation.</p>
+    `
+  };
+
+  if (detail) {
+    detail.innerHTML = infos[thema];
+  }
+}
+
+
+
+
+
+
+</body>
+</html>
